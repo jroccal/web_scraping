@@ -72,6 +72,48 @@ def get_news_links(list_queries, driver, n_pages=5):
         
     return list_head_news
 
+def get_news_links_from_bing(list_queries, headers, n_pages=5):
+    list_head_news = [] 
+    enable_to_scrap = True
+    for query in list_queries:
+
+        print('query:', query)
+        for page in range(1, n_pages+1):
+            
+            url = "http://www.bing.com/search?q=" + query + "&first=" + str((page - 1) * 10)
+
+            delay = int(np.quantile(np.random.random(30)*30, np.random.choice([0.25, 0.5, 0.75], 1)))
+            
+            r = requests.get(url, headers=headers)            
+            soup = BeautifulSoup(r.text, 'html.parser')
+
+            print('page:', page, 'delay:',delay)
+
+            general_search = soup.find_all('ol', {'id':'b_results'})
+            link_tmp = ''
+            if len(general_search) > 0:
+                for item in list(general_search[0].children):
+                    itema = item.find('a')
+                    title_tmp = itema.text
+                    if 'href' in itema.attrs.keys():
+                        link_tmp = itema['href']
+
+                    date_tmp = item.find('span', class_ = 'news_dt')    
+                    if date_tmp is not None:    
+                        date_tmp = date_tmp.text
+
+                    list_head_news.append({'query':query, 'title':title_tmp, 'link':link_tmp, 'date':date_tmp})
+
+            if len(list_head_news) == 0:
+                print('\n Bing have detected unusual traffic from your computer network, change IP or try later')
+                enable_to_scrap = False
+                break
+
+        if not enable_to_scrap:
+            break
+
+    return list_head_news
+
 def scraping_text(df, link_column='link'):
     
     list_news = []
