@@ -114,7 +114,7 @@ def get_news_links_from_bing(list_queries, headers, n_pages=5):
 
     return list_head_news
 
-def scraping_text(df, link_column='link'):
+def scraping_text(df, headers, link_column='link'):
     
     list_news = []
     
@@ -125,7 +125,7 @@ def scraping_text(df, link_column='link'):
         time.sleep(delay)
 
         try:
-            html_tmp = requests.get(dict_data[link_column]).text        
+            html_tmp = requests.get(dict_data[link_column], headers=headers).text        
             not_error = True
         except Exception as e:
             not_error = False
