@@ -30,7 +30,7 @@ def get_query(base_words_query, samples=10):
     return list_valid_arrays
 
 
-def get_news_links(list_queries, driver, n_pages=5):
+def get_news_links_from_google(list_queries, driver, n_pages=5):
     list_head_news = [] 
     enable_to_scrap = True
     for query in list_queries:
@@ -40,9 +40,14 @@ def get_news_links(list_queries, driver, n_pages=5):
             url = "http://www.google.com/search?q=" + query + "&start=" + str((page - 1) * 10)
             #delay = int(np.median(np.random.random(10)*10))
             delay = int(np.quantile(np.random.random(30)*30, np.random.choice([0.25, 0.5, 0.75], 1)))
+            
             driver.get(url)
             soup = BeautifulSoup(driver.page_source, 'html.parser')
-            # soup = BeautifulSoup(r.text, 'html.parser')
+
+            '''
+            r = requests.get(url, headers=headers)            
+            soup = BeautifulSoup(r.text, 'html.parser')
+            '''
         
             print('page:', page, 'delay:',delay)
             
