@@ -155,6 +155,9 @@ def scraping_text(df, headers, link_column='link'):
                 
     return pd.DataFrame(list_news)
 
-def save_data(df, text_column, name_file):
-    df[text_column] = df[text_column].str.encode('utf-8')
-    df.to_csv(name_file)
+def save_data(df, text_column, name_file, encode='utf-8'):
+    if encode is None:        
+        df.to_csv(name_file)
+    else:
+        df[text_column] = df[text_column].str.encode(encode)
+        df.to_csv(name_file)
